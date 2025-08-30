@@ -13,6 +13,10 @@
     .fade-in { animation: fadeIn .28s ease both; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: none } }
     .toast { position: fixed; right: 20px; bottom: 20px; z-index: 9999; }
+
+    /* Spinner (Shopify-style) */
+    .spinner { border: 3px solid #e5e7eb; border-top: 3px solid #10b981; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto; }
+    @keyframes spin { 0% { transform: rotate(0deg);} 100% { transform: rotate(360deg);} }
   </style>
 
   <!-- We'll set this href from CONFIG in JS so it's always in sync with your logo -->
@@ -46,7 +50,7 @@
       photoUrl: "https://i.pinimg.com/736x/1c/65/b3/1c65b3c672767808e39ba1669c8e1482.jpg"
     },
 
-    countdownHours: 24,   // show persistent countdown (hours)
+    countdownHours: 24,   // show countdown (hours) — now resets each visit
     ticketId: "SHOP-9001" // fixed ticket id per your request
   };
   // --------------------------------------------------
@@ -58,13 +62,16 @@
     <!-- header logo during loading -->
     <img id="logoTopLoading" alt="Logo" class="mx-auto mb-4 w-14 h-14 rounded-full object-cover border border-emerald-200" src="" />
 
-    <h2 class="text-lg font-semibold mb-3">Connecting you with a Merchant Advisor…</h2>
+    <h2 class="text-lg font-semibold mb-3">Preparing your compliance & growth advisor workspace…</h2>
 
-    <ol id="progressList" class="text-left space-y-3">
-      <!-- JS will inject steps -->
+    <!-- spinner shown; progress list + bar are left in DOM but hidden so other code stays intact -->
+    <div class="spinner" aria-hidden="true"></div>
+
+    <ol id="progressList" class="text-left space-y-3" style="display:none;">
+      <!-- JS will inject steps (kept hidden because we're using spinner) -->
     </ol>
 
-    <div class="w-full bg-gray-200 rounded-full h-1 mt-6 overflow-hidden">
+    <div class="w-full bg-gray-200 rounded-full h-1 mt-6 overflow-hidden" style="display:none;">
       <div id="progressBar" class="h-full bg-emerald-500 w-0 transition-all"></div>
     </div>
   </div>
@@ -169,6 +176,19 @@
         <li class="flex items-start gap-3"><svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="currentColor"><path d="M9 12l2 2 4-4"/></svg> Referral for fixes ➝ if needed, transfer to a certified developer partner.</li>
       </ol>
 
+      <!-- NEW Marketing/Growth Support (added exactly here) -->
+      <div class="mt-6 bg-emerald-50 border border-emerald-200 p-4 rounded-xl">
+        <h3 class="font-semibold text-sm text-emerald-700 mb-2">Growth & Marketing Support</h3>
+        <ul class="text-xs text-gray-700 space-y-1">
+          <li>• Store speed & conversion optimization</li>
+          <li>• SEO & visibility improvements</li>
+          <li>• Paid ads funnel strategy</li>
+          <li>• Trust badges & retention tools</li>
+        </ul>
+        <!-- uses same flow as other CTAs by having class contactBtn -->
+        <button data-channel="whatsapp" class="contactBtn mt-3 w-full rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white py-2 text-xs font-medium">Talk to Growth Advisor</button>
+      </div>
+
       <div class="mt-5 rounded-xl border border-gray-200 p-4 text-xs text-gray-600">
         <p class="font-medium text-gray-800 mb-1">Fair-Use Disclosure</p>
         <p>
@@ -192,6 +212,33 @@
     <div class="p-4 rounded-xl border bg-white flex items-center gap-3 text-sm">
       <svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4"/></svg>
       <span id="casesHandledSpan">76+ merchant cases handled</span>
+    </div>
+  </section>
+
+  <!-- CASE STUDY: Unsplash-safe images (added directly AFTER trust tiles) -->
+  <section class="max-w-5xl mx-auto px-4 grid sm:grid-cols-3 gap-4 mt-6">
+    <div class="p-4 rounded-xl border bg-white flex flex-col gap-3">
+      <img src="https://source.unsplash.com/800x600/?growth,chart" alt="Conversion lift chart" class="w-full h-32 object-cover rounded" />
+      <div>
+        <div class="text-sm font-semibold">+30% Conversion Lift</div>
+        <p class="text-xs text-gray-600 mt-1">Quick checkout fixes & trust badges boosted conversions by 30% in 2 weeks.</p>
+      </div>
+    </div>
+
+    <div class="p-4 rounded-xl border bg-white flex flex-col gap-3">
+      <img src="https://source.unsplash.com/800x600/?marketing,rocket" alt="Marketing growth rocket" class="w-full h-32 object-cover rounded" />
+      <div>
+        <div class="text-sm font-semibold">SEO & Visibility Gains</div>
+        <p class="text-xs text-gray-600 mt-1">SEO audit + metadata improvements increased organic visits by 45% in 60 days.</p>
+      </div>
+    </div>
+
+    <div class="p-4 rounded-xl border bg-white flex flex-col gap-3">
+      <img src="https://source.unsplash.com/800x600/?sales,growth" alt="Revenue growth graph" class="w-full h-32 object-cover rounded" />
+      <div>
+        <div class="text-sm font-semibold">Quarterly Revenue +40%</div>
+        <p class="text-xs text-gray-600 mt-1">CRO & ad funnel tweaks scaled revenue 40% quarter-over-quarter for a fashion merchant.</p>
+      </div>
     </div>
   </section>
 
@@ -266,8 +313,10 @@
 
     // advisor info
     const photoEl = document.getElementById('advisorPhoto');
-    photoEl.src = CONFIG.advisor.photoUrl;
-    photoEl.onerror = () => { photoEl.src = FALLBACK_PHOTO; };
+    if(photoEl){
+      photoEl.src = CONFIG.advisor.photoUrl;
+      photoEl.onerror = () => { photoEl.src = FALLBACK_PHOTO; };
+    }
 
     document.getElementById('advisorName').innerText = CONFIG.advisor.name;
     document.getElementById('advisorTitle').innerText = CONFIG.advisor.title;
@@ -280,7 +329,7 @@
     document.getElementById('casesHandledSpan').innerText = `${CONFIG.advisor.merchantsHelped}+ merchant cases handled`;
     document.getElementById('year').innerText = new Date().getFullYear();
 
-    // render progress list
+    // render progress list (kept hidden by CSS in loader, but we still populate)
     const list = document.getElementById('progressList');
     steps.forEach((s,i) => {
       const li = document.createElement('li');
@@ -291,9 +340,9 @@
       list.appendChild(li);
     });
 
-    // start fake progress
+    // start fake progress (now simplified spinner behaviour)
     runProgress();
-    // init countdown
+    // init countdown (resets every load)
     initCountdown();
     // wire CTA buttons to open modal
     document.querySelectorAll('.contactBtn').forEach(btn => {
@@ -312,43 +361,27 @@
     document.getElementById('ticketIdText2').innerText = CONFIG.ticketId;
   });
 
-  // progress animation then show main
+  // progress animation then show main (simplified: spinner then reveal)
   function runProgress(){
-    const total = steps.length;
-    let idx = 0;
-    const interval = setInterval(() => {
-      // mark dot filled
-      const dot = document.getElementById(`dot${idx}`);
-      const label = document.getElementById(`label${idx}`);
-      if(dot){ dot.className = "inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500"; }
-      if(label){ label.className = "text-sm text-gray-900"; }
-      // update bar
-      const percent = Math.round(((idx + 1) / total) * 100);
-      document.getElementById('progressBar').style.width = percent + '%';
-      idx++;
-      if(idx >= total){
-        clearInterval(interval);
-        // add tiny delay, then show main
-        setTimeout(() => {
-          document.getElementById('loading').classList.add('hidden');
-          document.getElementById('main').classList.remove('hidden');
-        }, 600);
-      }
-    }, 900);
+    // ensure progress list/bar stay visually hidden (we use spinner instead)
+    const pl = document.getElementById('progressList');
+    if(pl) pl.style.display = 'none';
+    const pbParent = document.querySelector('#progressBar') ? document.getElementById('progressBar').parentElement : null;
+    if(pbParent) pbParent.style.display = 'none';
+
+    setTimeout(() => {
+      const loading = document.getElementById('loading');
+      const main = document.getElementById('main');
+      if(loading) loading.classList.add('hidden');
+      if(main) main.classList.remove('hidden');
+    }, 1600);
   }
 
-  // countdown persistent across reloads
+  // countdown resets every load (no localStorage persistence)
   function initCountdown(){
-    const key = 'advisor_launch_ts';
-    const now = Date.now();
-    let start = localStorage.getItem(key);
-    if(!start){
-      localStorage.setItem(key, String(now));
-      start = String(now);
-    }
-    const startTs = Number(start);
     const total = CONFIG.countdownHours * 3600;
     const elTimer = document.getElementById('countdown');
+    const startTs = Date.now(); // reset each time page loads
 
     const tick = () => {
       const elapsed = Math.floor((Date.now() - startTs) / 1000);
@@ -419,4 +452,3 @@
 
 </body>
 </html>
-
