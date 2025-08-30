@@ -1,9 +1,36 @@
-<!-- CONFIG -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Merchant Support Gateway — Independent Partner</title>
+
+  <!-- Tailwind Play CDN (fast way to style without build) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* small custom styles */
+    .fade-in { animation: fadeIn .28s ease both; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: none } }
+    .dot { width:10px;height:10px;border-radius:9999px;display:inline-block }
+    .toast { position: fixed; right: 20px; bottom: 20px; z-index: 9999; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900 antialiased">
+
+<!--
+  IMPORTANT: Edit the CONFIG below to match your WhatsApp/Telegram/email and copy.
+  This UI is "Shopify-inspired" for familiarity but DO NOT imply official Shopify
+  affiliation. The visible disclaimer is required — keep it present.
+-->
+
 <script>
+  // -------------- CONFIG (edit these) ----------------
   const CONFIG = {
-    whatsappNumber: "2349135251130",
-    telegramUsername: "Xcellexert",
+    whatsappNumber: "2349135251130",   // no plus sign, country code first
+    telegramUsername: "Xcellexert",    // username only
     supportEmail: "support@example.com",
+
     advisor: {
       name: "Juan Manuel",
       title: "Compliance & Merchant Support Advisor",
@@ -13,46 +40,365 @@
       years: "5+ years",
       merchantsHelped: 76,
       rating: 4.9,
-      // ✅ Your pinned staff photo
-      photoUrl: "https://i.pinimg.com/736x/1c/65/b3/1c65b3c672767808e39ba1669c8e1482.jpg"
+      // royalty-free Unsplash portrait
+      photoUrl: "https://images.unsplash.com/photo-1593032457860-9e1d5bc3c7d4?q=80&w=640&auto=format&fit=crop"
     },
-    countdownHours: 24,
-    ticketId: "SHOP-9001"
+
+    countdownHours: 24,   // show persistent countdown (hours)
+    ticketId: "SHOP-9001" // fixed ticket id per your request
   };
+  // --------------------------------------------------
 </script>
 
-...
-
-<!-- top bar -->
-<header class="sticky top-0 bg-white/80 backdrop-blur border-b z-30">
-  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <!-- ✅ Shopify favicon instead of green glyph -->
-      <img
-        src="https://cdn.shopify.com/static/shopify-favicon.png"
-        alt="Shopify Logo"
-        class="w-8 h-8"
-      />
-      <div>
-        <div class="text-sm font-semibold">Merchant Support Gateway</div>
-        <div class="text-xs text-gray-500">Shopify-aligned | Independent Partner</div>
-      </div>
+<!-- LOADING / PROGRESS (shows until steps done) -->
+<div id="loading" class="min-h-screen flex items-center justify-center px-6">
+  <div class="max-w-md w-full text-center">
+    <!-- custom support glyph -->
+    <div class="mx-auto mb-4 w-14 h-14 rounded-full bg-emerald-600 flex items-center justify-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7v2.25c0 .414-.336.75-.75.75S3 12.664 3 12.25V9a9 9 0 1 1 18 0v3.25c0 .414-.336.75-.75.75s-.75-.336-.75-.75V9a7 7 0 0 0-7-7Z"/><path d="M5.25 13.5A.75.75 0 0 0 4.5 14v2.25A5.75 5.75 0 0 0 10.25 22h3.5A5.75 5.75 0 0 0 19.5 16.25V14a.75.75 0 0 0-.75-.75h-13.5Z"/></svg>
     </div>
-    <div class="hidden md:flex items-center gap-3 text-xs text-gray-600">
-      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-           stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 8V7a6 6 0 0 0-12 0v1"/>
-        <path d="M5 11v6a4 4 0 0 0 4 4h6"/>
-      </svg>
-      <span>Encrypted conversation channels</span>
+
+    <h2 class="text-lg font-semibold mb-3">Connecting you with a Merchant Advisor…</h2>
+
+    <ol id="progressList" class="text-left space-y-3">
+      <!-- JS will inject steps -->
+    </ol>
+
+    <div class="w-full bg-gray-200 rounded-full h-1 mt-6 overflow-hidden">
+      <div id="progressBar" class="h-full bg-emerald-500 w-0 transition-all"></div>
     </div>
   </div>
-</header>
+</div>
 
-...
+<!-- MAIN CONTENT (hidden initially) -->
+<main id="main" class="hidden min-h-screen pb-12">
+  <!-- top bar -->
+  <header class="sticky top-0 bg-white/80 backdrop-blur border-b z-30">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full bg-emerald-600 flex items-center justify-center text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7v2.25c0 .414-.336.75-.75.75S3 12.664 3 12.25V9a9 9 0 1 1 18 0v3.25c0 .414-.336.75-.75.75s-.75-.336-.75-.75V9a7 7 0 0 0-7-7Z"/><path d="M5.25 13.5A.75.75 0 0 0 4.5 14v2.25A5.75 5.75 0 0 0 10.25 22h3.5A5.75 5.75 0 0 0 19.5 16.25V14a.75.75 0 0 0-.75-.75h-13.5Z"/></svg>
+        </div>
+        <div>
+          <div class="text-sm font-semibold">Merchant Support Gateway</div>
+          <div class="text-xs text-gray-500">Shopify-aligned | Independent Partner</div>
+        </div>
+      </div>
+      <div class="hidden md:flex items-center gap-3 text-xs text-gray-600">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V7a6 6 0 0 0-12 0v1"/><path d="M5 11v6a4 4 0 0 0 4 4h6"/></svg>
+        <span>Encrypted conversation channels</span>
+      </div>
+    </div>
+  </header>
 
-<!-- advisor photo (updated classes to avoid clipping) -->
-<img id="advisorPhoto"
-     src=""
-     alt="Advisor"
-     class="w-24 h-24 md:w-28 md:h-28 rounded-full object-cover border shadow-sm" />
+  <!-- advisor + how it works -->
+  <section class="max-w-5xl mx-auto px-4 py-10 grid gap-8 md:grid-cols-[1.2fr_0.8fr]">
+    <!-- left: advisor card -->
+    <div class="bg-white rounded-2xl shadow-sm p-6 md:p-8">
+      <div class="flex items-start gap-6">
+        <img id="advisorPhoto" src="" alt="Advisor" class="w-24 h-24 md:w-28 md:h-28 rounded-full object-cover border" />
+        <div class="flex-1">
+          <h1 id="advisorName" class="text-2xl font-semibold tracking-tight"></h1>
+          <p id="advisorTitle" class="text-emerald-700 text-sm font-medium mt-1"></p>
+
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-xs text-gray-600">
+            <span id="staffIdSpan"></span>
+            <span id="caseIdSpan"></span>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-4 mt-2 text-xs text-gray-600">
+            <span id="expSpan"></span>
+            <span id="helpedSpan"></span>
+            <span id="ratingSpan"></span>
+          </div>
+
+          <div class="inline-flex items-center gap-2 mt-2 text-xs px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2a7 7 0 0 0-7 7v2.25a.75.75 0 0 1-.75.75H3"/></svg>
+            <span id="badgeSpan"></span>
+          </div>
+        </div>
+      </div>
+
+      <p class="mt-6 text-sm text-gray-700">
+        Your advisor will begin with a quick <strong>staff-style compliance audit</strong> covering policies, store setup, security headers, and SEO visibility.
+        If technical fixes are required, you'll be referred to a certified developer partner for implementation.
+      </p>
+
+      <!-- CTAs (click opens popup first) -->
+      <div class="grid sm:grid-cols-3 gap-3 mt-6">
+        <button data-channel="whatsapp" class="contactBtn group inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white py-3 text-sm font-medium">
+          <!-- message icon -->
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          WhatsApp
+          <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14"/></svg>
+        </button>
+
+        <button data-channel="telegram" class="contactBtn group inline-flex items-center justify-center gap-2 rounded-xl bg-blue-500 hover:bg-blue-600 text-white py-3 text-sm font-medium">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M21 4L7.5 12.5"/></svg>
+          Telegram
+          <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14"/></svg>
+        </button>
+
+        <button data-channel="email" class="contactBtn group inline-flex items-center justify-center gap-2 rounded-xl bg-gray-900 hover:bg-black text-white py-3 text-sm font-medium">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M2 6.5A2.5 2.5 0 0 1 4.5 4h15A2.5 2.5 0 0 1 22 6.5v11A2.5 2.5 0 0 1 19.5 20h-15A2.5 2.5 0 0 1 2 17.5v-11z"/></svg>
+          Secure Email
+          <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14"/></svg>
+        </button>
+      </div>
+
+      <p class="mt-3 flex items-center gap-2 text-xs text-gray-600">
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 11c1.657 0 3-1.567 3-3.5S13.657 4 12 4s-3 1.567-3 3.5S10.343 11 12 11z"/></svg>
+        Conversations are encrypted and handled under merchant-care best practices.
+      </p>
+    </div>
+
+    <!-- right: how it works -->
+    <aside class="bg-white rounded-2xl shadow-sm p-6 md:p-8">
+      <h2 class="text-lg font-semibold mb-3">How this works</h2>
+      <ol class="space-y-3 text-sm">
+        <li class="flex items-start gap-3"><svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="currentColor"><path d="M9 12l2 2 4-4"/></svg> Staff-style Audit ➝ quick review of compliance, setup, SEO visibility, and risk signals.</li>
+        <li class="flex items-start gap-3"><svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="currentColor"><path d="M9 12l2 2 4-4"/></svg> Results shared ➝ you get a clear diagnosis and recommended actions.</li>
+        <li class="flex items-start gap-3"><svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="currentColor"><path d="M9 12l2 2 4-4"/></svg> Referral for fixes ➝ if needed, transfer to a certified developer partner.</li>
+      </ol>
+
+      <div class="mt-5 rounded-xl border border-gray-200 p-4 text-xs text-gray-600">
+        <p class="font-medium text-gray-800 mb-1">Fair-Use Disclosure</p>
+        <p>
+          This site is operated by an independent partner to continue merchant cases after staff interactions.
+          Not affiliated with or endorsed by Shopify Inc. References are for workflow clarity only.
+        </p>
+      </div>
+    </aside>
+  </section>
+
+  <!-- trust tiles -->
+  <section class="max-w-5xl mx-auto px-4 grid sm:grid-cols-3 gap-4">
+    <div class="p-4 rounded-xl border bg-white flex items-center gap-3 text-sm">
+      <svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3 6 6 .9-4.5 3.9L19 22 12 18.5 5 22l1.5-8.2L2 10.9 8 10z"/></svg>
+      Verified partner workflow
+    </div>
+    <div class="p-4 rounded-xl border bg-white flex items-center gap-3 text-sm">
+      <svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 11c1.657 0 3-1.567 3-3.5S13.657 4 12 4s-3 1.567-3 3.5S10.343 11 12 11z"/></svg>
+      Encrypted live channels
+    </div>
+    <div class="p-4 rounded-xl border bg-white flex items-center gap-3 text-sm">
+      <svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4"/></svg>
+      <span id="casesHandledSpan">76+ merchant cases handled</span>
+    </div>
+  </section>
+
+  <!-- footer -->
+  <footer class="mt-10 border-t bg-white">
+    <div class="max-w-6xl mx-auto px-4 py-6 text-xs text-gray-500">
+      <p>
+        © <span id="year"></span> Merchant Support Gateway — Independent Partner resource.
+        This experience is provided for guidance and does not represent Shopify Inc.
+      </p>
+    </div>
+  </footer>
+</main>
+
+<!-- MODAL POPUP (form) -->
+<div id="modal" class="fixed inset-0 hidden items-center justify-center bg-black bg-opacity-40 z-50">
+  <div class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md fade-in">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-semibold">Submit Ticket (ID: <span id="ticketIdText"></span>)</h3>
+      <button id="modalClose" class="text-gray-500 hover:text-gray-700">✕</button>
+    </div>
+
+    <div>
+      <label class="text-xs text-gray-600">Store URL</label>
+      <input id="inputStore" class="w-full border rounded-lg p-2 mb-3" placeholder="example.myshopify.com"/>
+      <label class="text-xs text-gray-600">Email</label>
+      <input id="inputEmail" type="email" class="w-full border rounded-lg p-2 mb-3" placeholder="you@example.com"/>
+      <label class="text-xs text-gray-600">Issue</label>
+      <select id="inputIssue" class="w-full border rounded-lg p-2 mb-4">
+        <option>Compliance Warning</option>
+        <option>Checkout / Payment Issue</option>
+        <option>Store Visibility (SEO)</option>
+        <option>Security / Fraud Alert</option>
+        <option>Other</option>
+      </select>
+
+      <div class="flex gap-3">
+        <button id="sendBtn" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-lg">Submit & Open Channel</button>
+        <button id="cancelBtn" class="flex-1 border rounded-lg py-2">Cancel</button>
+      </div>
+
+      <p class="mt-3 text-xs text-gray-500">Ticket ID will be included in every message: <strong id="ticketIdText2"></strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast hidden">
+  <div class="bg-emerald-600 text-white px-4 py-2 rounded shadow">✅ Ticket submitted — opening your chat...</div>
+</div>
+
+<script>
+  // --------- app logic ----------
+  const steps = [
+    "Verifying merchant details",
+    "Checking policy & compliance status",
+    "Assigning advisor",
+    "Preparing secure channel"
+  ];
+
+  // fill advisor data from CONFIG
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById('advisorPhoto').src = CONFIG.advisor.photoUrl;
+    document.getElementById('advisorName').innerText = CONFIG.advisor.name;
+    document.getElementById('advisorTitle').innerText = CONFIG.advisor.title;
+    document.getElementById('staffIdSpan').innerHTML = `Advisor ID: <strong>${CONFIG.advisor.staffId}</strong>`;
+    document.getElementById('caseIdSpan').innerHTML = `Case ID: <strong>${CONFIG.advisor.caseId}</strong>`;
+    document.getElementById('expSpan').innerText = `Experience: ${CONFIG.advisor.years}`;
+    document.getElementById('helpedSpan').innerText = `Merchants helped: ${CONFIG.advisor.merchantsHelped}+`;
+    document.getElementById('ratingSpan').innerText = `Rating: ${CONFIG.advisor.rating}/5 ⭐`;
+    document.getElementById('badgeSpan').innerText = CONFIG.advisor.partnerBadge;
+    document.getElementById('casesHandledSpan').innerText = `${CONFIG.advisor.merchantsHelped}+ merchant cases handled`;
+    document.getElementById('year').innerText = new Date().getFullYear();
+
+    // render progress list
+    const list = document.getElementById('progressList');
+    steps.forEach((s,i) => {
+      const li = document.createElement('li');
+      li.className = 'flex items-center gap-3';
+      li.innerHTML = `<span id="dot${i}" class="inline-flex w-5 h-5 rounded-full border border-gray-300 items-center justify-center"></span><span id="label${i}" class="text-sm text-gray-500">${s}</span>`;
+      list.appendChild(li);
+    });
+
+    // start fake progress
+    runProgress();
+    // init countdown
+    initCountdown();
+    // wire CTA buttons to open modal
+    document.querySelectorAll('.contactBtn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const channel = btn.getAttribute('data-channel');
+        openModal(channel);
+      });
+    });
+
+    // modal events
+    document.getElementById('modalClose').addEventListener('click', closeModal);
+    document.getElementById('cancelBtn').addEventListener('click', closeModal);
+    document.getElementById('sendBtn').addEventListener('click', sendTicket);
+    // ticket id places
+    document.getElementById('ticketIdText').innerText = CONFIG.ticketId;
+    document.getElementById('ticketIdText2').innerText = CONFIG.ticketId;
+  });
+
+  // progress animation then show main
+  function runProgress(){
+    const total = steps.length;
+    let idx = 0;
+    const interval = setInterval(() => {
+      // mark dot filled
+      const dot = document.getElementById(`dot${idx}`);
+      const label = document.getElementById(`label${idx}`);
+      if(dot){ dot.className = "inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500"; }
+      if(label){ label.className = "text-sm text-gray-900"; }
+      // update bar
+      const percent = Math.round(((idx + 1) / total) * 100);
+      document.getElementById('progressBar').style.width = percent + '%';
+      idx++;
+      if(idx >= total){
+        clearInterval(interval);
+        // add tiny delay, then show main
+        setTimeout(() => {
+          document.getElementById('loading').classList.add('hidden');
+          document.getElementById('main').classList.remove('hidden');
+        }, 600);
+      }
+    }, 900);
+  }
+
+  // countdown persistent across reloads
+  function initCountdown(){
+    const key = 'advisor_launch_ts';
+    const now = Date.now();
+    let start = localStorage.getItem(key);
+    if(!start){
+      localStorage.setItem(key, String(now));
+      start = String(now);
+    }
+    const startTs = Number(start);
+    const total = CONFIG.countdownHours * 3600;
+    const elTimerUpdate = () => {
+      const elapsed = Math.floor((Date.now() - startTs) / 1000);
+      const remaining = Math.max(total - elapsed, 0);
+      const h = Math.floor(remaining / 3600);
+      const m = Math.floor((remaining % 3600) / 60);
+      const s = remaining % 60;
+      // find amber banner time span
+      const span = document.querySelector('.bg-amber-50 p span.font-semibold');
+      if(span) span.innerText = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+      // also update small header timer if used
+      // update every second
+      if(remaining <= 0){
+        // optionally do something when expired
+      }
+    };
+    elTimerUpdate();
+    setInterval(elTimerUpdate, 1000);
+  }
+
+  // modal control
+  let activeChannel = null;
+  function openModal(channel){
+    activeChannel = channel; // 'whatsapp' | 'telegram' | 'email'
+    document.getElementById('modal').classList.remove('hidden');
+    // focus first input
+    setTimeout(()=>document.getElementById('inputStore').focus(), 120);
+  }
+  function closeModal(){
+    document.getElementById('modal').classList.add('hidden');
+    // clear inputs if you want or keep them
+  }
+
+  function showToast(){
+    const t = document.getElementById('toast');
+    t.classList.remove('hidden');
+    setTimeout(()=> t.classList.add('hidden'), 4000);
+  }
+
+  function sendTicket(){
+    const store = document.getElementById('inputStore').value.trim();
+    const email = document.getElementById('inputEmail').value.trim();
+    const issue = document.getElementById('inputIssue').value;
+    if(!store || !email){
+      alert('Please provide Store URL and Email before continuing.');
+      return;
+    }
+    const ticket = CONFIG.ticketId;
+    const message = `🟢 Shopify Support Ticket Created\nTicket ID: ${ticket}\nStore: ${store}\nEmail: ${email}\nIssue: ${issue}`;
+    const encoded = encodeURIComponent(message);
+
+    // open channel
+    if(activeChannel === 'whatsapp'){
+      const url = `https://wa.me/${CONFIG.whatsappNumber}?text=${encoded}`;
+      window.open(url, '_blank');
+    } else if(activeChannel === 'telegram'){
+      // using direct username pattern (may open profile in some clients)
+      // fallback: share URL to Telegram if username pattern does not open the chat client
+      let url = `https://t.me/${CONFIG.telegramUsername}?text=${encoded}`;
+      // open
+      window.open(url, '_blank');
+    } else if(activeChannel === 'email'){
+      const mailto = `mailto:${CONFIG.supportEmail}?subject=${encodeURIComponent('Support Ticket ' + ticket)}&body=${encoded}`;
+      window.location.href = mailto;
+    }
+
+    // UI feedback
+    closeModal();
+    showToast();
+
+    // reset fields
+    document.getElementById('inputStore').value = '';
+    document.getElementById('inputEmail').value = '';
+    document.getElementById('inputIssue').selectedIndex = 0;
+  }
+</script>
+
+</body>
+</html>
