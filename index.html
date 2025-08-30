@@ -1,196 +1,214 @@
-<!DOCTYPE html>
+<!doctype html> 
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Shopify Staff Support</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Merchant Support Gateway — Independent Partner</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
   <style>
-    /* --- Loading screen --- */
-    #loading-screen {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: #fff;
-      display: flex; flex-direction: column;
-      justify-content: center; align-items: center;
-      z-index: 9999;
-      font-family: Arial, sans-serif;
-    }
-    #loading-text { font-size: 1.2rem; margin-top: 15px; color: #333; }
-    .spinner {
-      border: 6px solid #f3f3f3;
-      border-top: 6px solid #5c6ac4;
-      border-radius: 50%;
-      width: 60px; height: 60px;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    /* --- Popup --- */
-    #supportPopup {
-      display: none;
-      position: fixed;
-      bottom: 20px; right: 20px;
-      width: 320px;
-      background: #fff;
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
-      padding: 20px;
-      z-index: 10000;
-    }
-    #supportPopup h3 { margin-bottom: 10px; }
-    #supportPopup label { font-size: 0.9rem; display: block; margin: 6px 0 2px; }
-    #supportPopup select, #supportPopup textarea {
-      width: 100%; padding: 6px;
-      border: 1px solid #ccc; border-radius: 6px;
-    }
-    #supportPopup button {
-      background: #5c6ac4; color: #fff;
-      border: none; border-radius: 6px;
-      padding: 8px 12px;
-      margin-top: 10px;
-      cursor: pointer;
-      width: 100%;
-    }
-
-    /* Countdown */
-    #countdown {
-      font-size: 1rem; font-weight: bold;
-      color: #e63946;
-      margin: 10px 0;
-    }
+    .fade-in { animation: fadeIn .28s ease both; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: none } }
+    .toast { position: fixed; right: 20px; bottom: 20px; z-index: 9999; }
+    .spinner { border: 3px solid #e5e7eb; border-top: 3px solid #10b981; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto; }
+    @keyframes spin { 0% { transform: rotate(0deg);} 100% { transform: rotate(360deg);} }
   </style>
+
+  <link id="faviconLink" rel="icon" href="">
 </head>
-<body>
-  <!-- Loading Screen -->
-  <div id="loading-screen">
-    <div class="spinner"></div>
-    <div id="loading-text">Loading staff tools…</div>
+<body class="bg-gray-50 text-gray-900 antialiased">
+
+<script>
+  const CONFIG = {
+    logoUrl: "https://cdn.shopify.com/static/shopify-favicon.png",
+    whatsappNumber: "2349135251130",
+    telegramUsername: "Xcellexert",
+    supportEmail: "support@example.com",
+
+    advisor: {
+      name: "Juan Manuel",
+      title: "Compliance & Merchant Support Advisor",
+      partnerBadge: "Independent Partner Resource",
+      staffId: "ADV-342991",
+      caseId: "CS-114882",
+      years: "5+ years",
+      merchantsHelped: 76,
+      rating: 4.9,
+      photoUrl: "https://i.pinimg.com/736x/1c/65/b3/1c65b3c672767808e39ba1669c8e1482.jpg"
+    },
+
+    ticketId: "SHOP-9001"
+  };
+</script>
+
+<!-- LOADING -->
+<div id="loading" class="min-h-screen flex items-center justify-center px-6">
+  <div class="max-w-md w-full text-center">
+    <img id="logoTopLoading" alt="Logo" class="mx-auto mb-4 w-14 h-14 rounded-full object-cover border border-emerald-200" src="" />
+    <h2 class="text-lg font-semibold mb-3">Preparing your compliance & growth advisor workspace…</h2>
+    <div class="spinner" aria-hidden="true"></div>
   </div>
+</div>
 
-  <!-- Main Content -->
-  <div id="main-content" style="display:none;">
-    <h1>Shopify Staff Support</h1>
-    <p>Welcome to official staff assistance.</p>
+<!-- MAIN -->
+<main id="main" class="hidden min-h-screen pb-12">
+  <header class="sticky top-0 bg-white/80 backdrop-blur border-b z-30">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <img id="logoTop" alt="Logo" class="w-9 h-9 rounded-full object-cover border border-emerald-200" src="" />
+        <div>
+          <div class="text-sm font-semibold">Merchant Support Gateway</div>
+          <div class="text-xs text-gray-500">Shopify-aligned | staff advisor</div>
+        </div>
+      </div>
+    </div>
+  </header>
 
-    <div id="countdown"></div>
+  <!-- advisor -->
+  <section class="max-w-5xl mx-auto px-4 py-10">
+    <div class="bg-white rounded-2xl shadow-sm p-6 md:p-8">
+      <div class="flex items-start gap-6">
+        <img id="advisorPhoto" src="" alt="Advisor" class="w-24 h-24 md:w-28 md:h-28 rounded-full object-cover border" />
+        <div>
+          <h1 id="advisorName" class="text-2xl font-semibold tracking-tight"></h1>
+          <p id="advisorTitle" class="text-emerald-700 text-sm font-medium mt-1"></p>
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-xs text-gray-600">
+            <span id="staffIdSpan"></span>
+            <span id="caseIdSpan"></span>
+          </div>
+        </div>
+      </div>
+      <p class="mt-6 text-sm text-gray-700">
+        Your advisor will begin with a quick <strong>staff-style compliance audit</strong>.  
+        If technical fixes are required, you'll be referred to a certified developer partner.
+      </p>
+      <div class="grid sm:grid-cols-3 gap-3 mt-6">
+        <button data-channel="whatsapp" class="contactBtn bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl">WhatsApp</button>
+        <button data-channel="telegram" class="contactBtn bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-xl">Telegram</button>
+        <button data-channel="email" class="contactBtn bg-gray-900 hover:bg-black text-white py-3 rounded-xl">Secure Email</button>
+      </div>
+    </div>
+  </section>
 
-    <button onclick="openPopup()">Get Support</button>
-  </div>
+  <!-- footer -->
+  <footer class="mt-10 bg-white">
+    <div class="max-w-6xl mx-auto px-4 py-6 text-xs text-gray-500">
+      <p>© <span id="year"></span> Merchant Support Gateway — Independent Partner resource.</p>
+    </div>
+  </footer>
+</main>
 
-  <!-- Popup -->
-  <div id="supportPopup">
-    <h3>Connect with Support</h3>
-    <form id="supportForm">
-      <label>Store Status</label>
-      <select name="status">
-        <option value="Active">Active</option>
-        <option value="New">New</option>
-        <option value="Struggling">Struggling</option>
-        <option value="Locked">Locked</option>
+<!-- MODAL -->
+<div id="modal" class="fixed inset-0 hidden items-center justify-center bg-black bg-opacity-40 z-50">
+  <div class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md fade-in">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-semibold">Submit Ticket (ID: <span id="ticketIdText"></span>)</h3>
+      <button id="modalClose" class="text-gray-500 hover:text-gray-700">✕</button>
+    </div>
+
+    <div>
+      <label class="text-xs text-gray-600">Full Name</label>
+      <input id="inputName" class="w-full border rounded-lg p-2 mb-3" placeholder="John Doe"/>
+
+      <label class="text-xs text-gray-600">Store URL</label>
+      <input id="inputStore" class="w-full border rounded-lg p-2 mb-3" placeholder="example.myshopify.com"/>
+
+      <label class="text-xs text-gray-600">Email</label>
+      <input id="inputEmail" type="email" class="w-full border rounded-lg p-2 mb-3" placeholder="you@example.com"/>
+
+      <label class="text-xs text-gray-600">Issue</label>
+      <select id="inputIssue" class="w-full border rounded-lg p-2 mb-3">
+        <option>Compliance Warning</option>
+        <option>Checkout / Payment Issue</option>
+        <option>Store Visibility (SEO)</option>
+        <option>Other</option>
       </select>
 
-      <label>Main Challenge</label>
-      <select name="challenge">
-        <option value="SEO">SEO</option>
-        <option value="Conversion">Conversion</option>
-        <option value="Payments">Payments</option>
-        <option value="Compliance">Compliance</option>
-        <option value="Other">Other</option>
-      </select>
+      <label class="text-xs text-gray-600">Additional Details</label>
+      <textarea id="inputDetails" rows="3" class="w-full border rounded-lg p-2 mb-4" placeholder="Describe your issue..."></textarea>
 
-      <label>Your Message</label>
-      <textarea name="message" rows="3" placeholder="Explain your challenge..."></textarea>
-
-      <button type="submit">Send to WhatsApp</button>
-    </form>
+      <div class="flex gap-3">
+        <button id="sendBtn" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-lg">Submit & Open Channel</button>
+        <button id="cancelBtn" class="flex-1 border rounded-lg py-2">Cancel</button>
+      </div>
+    </div>
   </div>
+</div>
 
-  <script>
-    /* --- Loading Screen --- */
-    const loadingMessages = [
-      "Connecting to staff dashboard…",
-      "Checking compliance tools…",
-      "Syncing with Shopify database…",
-      "Preparing staff interface…",
-      "Almost ready…"
-    ];
-    let msgIndex = 0;
-    const loadingText = document.getElementById("loading-text");
+<div id="toast" class="toast hidden">
+  <div class="bg-emerald-600 text-white px-4 py-2 rounded shadow">✅ Ticket submitted — opening your chat...</div>
+</div>
 
-    setInterval(() => {
-      msgIndex = (msgIndex + 1) % loadingMessages.length;
-      loadingText.textContent = loadingMessages[msgIndex];
-    }, 1200);
+<script>
+  const FALLBACK_PHOTO = "https://images.unsplash.com/photo-1593032457860-9e1d5bc3c7d4?q=80&w=640&auto=format&fit=crop";
 
-    // Keep visible for at least 5s
-    window.addEventListener("load", () => {
-      setTimeout(() => {
-        document.getElementById("loading-screen").style.display = "none";
-        document.getElementById("main-content").style.display = "block";
-      }, 5000);
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById('faviconLink').href = CONFIG.logoUrl;
+    document.getElementById('logoTop').src = CONFIG.logoUrl;
+    document.getElementById('logoTopLoading').src = CONFIG.logoUrl;
+
+    const photoEl = document.getElementById('advisorPhoto');
+    photoEl.src = CONFIG.advisor.photoUrl;
+    photoEl.onerror = () => { photoEl.src = FALLBACK_PHOTO; };
+
+    document.getElementById('advisorName').innerText = CONFIG.advisor.name;
+    document.getElementById('advisorTitle').innerText = CONFIG.advisor.title;
+    document.getElementById('staffIdSpan').innerHTML = `Advisor ID: <strong>${CONFIG.advisor.staffId}</strong>`;
+    document.getElementById('caseIdSpan').innerHTML = `Case ID: <strong>${CONFIG.advisor.caseId}</strong>`;
+    document.getElementById('year').innerText = new Date().getFullYear();
+    document.getElementById('ticketIdText').innerText = CONFIG.ticketId;
+
+    setTimeout(() => {
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('main').classList.remove('hidden');
+    }, 1600);
+
+    document.querySelectorAll('.contactBtn').forEach(btn => {
+      btn.addEventListener('click', () => openModal(btn.getAttribute('data-channel')));
     });
 
-    /* --- Countdown (resets once per day with cookies) --- */
-    function setCookie(name, value, hours) {
-      const d = new Date();
-      d.setTime(d.getTime() + (hours*60*60*1000));
-      document.cookie = name + "=" + value + ";expires=" + d.toUTCString() + ";path=/";
-    }
-    function getCookie(name) {
-      let match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
-      if (match) return match[2];
-      return null;
-    }
+    document.getElementById('modalClose').addEventListener('click', closeModal);
+    document.getElementById('cancelBtn').addEventListener('click', closeModal);
+    document.getElementById('sendBtn').addEventListener('click', sendTicket);
+  });
 
-    function startCountdown() {
-      let saved = getCookie("countdown");
-      let target;
-      if (saved) {
-        target = new Date(saved);
-      } else {
-        target = new Date();
-        target.setHours(23,59,59,999); // End of today
-        setCookie("countdown", target.toISOString(), 24);
-      }
+  let activeChannel = null;
+  function openModal(channel){ activeChannel = channel; document.getElementById('modal').classList.remove('hidden'); }
+  function closeModal(){ document.getElementById('modal').classList.add('hidden'); }
 
-      function updateCountdown() {
-        const now = new Date();
-        const diff = target - now;
-        if (diff <= 0) {
-          document.getElementById("countdown").textContent = "Offer expired. Refresh tomorrow!";
-          return;
-        }
-        const hrs = Math.floor(diff / (1000*60*60));
-        const mins = Math.floor((diff % (1000*60*60)) / (1000*60));
-        const secs = Math.floor((diff % (1000*60)) / 1000);
-        document.getElementById("countdown").textContent = `⏳ Ends in ${hrs}h ${mins}m ${secs}s`;
-      }
-      updateCountdown();
-      setInterval(updateCountdown, 1000);
-    }
-    startCountdown();
+  function showToast(){
+    const t = document.getElementById('toast');
+    t.classList.remove('hidden');
+    setTimeout(()=> t.classList.add('hidden'), 4000);
+  }
 
-    /* --- Popup --- */
-    function openPopup() {
-      document.getElementById("supportPopup").style.display = "block";
+  function sendTicket(){
+    const name = document.getElementById('inputName').value.trim();
+    const store = document.getElementById('inputStore').value.trim();
+    const email = document.getElementById('inputEmail').value.trim();
+    const issue = document.getElementById('inputIssue').value;
+    const details = document.getElementById('inputDetails').value.trim();
+
+    if(!name || !store || !email){
+      alert('Please provide Name, Store URL and Email before continuing.');
+      return;
     }
 
-    document.getElementById("supportForm").addEventListener("submit", function(e){
-      e.preventDefault();
-      const status = this.status.value;
-      const challenge = this.challenge.value;
-      const message = this.message.value;
+    const message = `🟢 Shopify Support Ticket\nTicket ID: ${CONFIG.ticketId}\n👤 Name: ${name}\n🛒 Store: ${store}\n📧 Email: ${email}\n❓ Issue: ${issue}\n📝 Details: ${details}`;
+    const encoded = encodeURIComponent(message);
 
-      const text = `📌 Store Status: ${status}%0A⚡ Challenge: ${challenge}%0A📝 Message: ${encodeURIComponent(message)}`;
-      const phone = "2349032365125"; // Your WhatsApp Business number
-      window.open(`https://wa.me/${phone}?text=${text}`, "_blank");
-    });
-  </script>
+    if(activeChannel === 'whatsapp'){
+      window.open(`https://wa.me/${CONFIG.whatsappNumber}?text=${encoded}`, '_blank');
+    } else if(activeChannel === 'telegram'){
+      window.open(`https://t.me/${CONFIG.telegramUsername}?text=${encoded}`, '_blank');
+    } else if(activeChannel === 'email'){
+      window.location.href = `mailto:${CONFIG.supportEmail}?subject=Support Ticket ${CONFIG.ticketId}&body=${encoded}`;
+    }
+
+    closeModal();
+    showToast();
+  }
+</script>
 </body>
 </html>
