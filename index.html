@@ -1,145 +1,58 @@
-import { useState, useEffect } from "react";
-import { Lock, Clock } from "lucide-react";
+<!-- CONFIG -->
+<script>
+  const CONFIG = {
+    whatsappNumber: "2349135251130",
+    telegramUsername: "Xcellexert",
+    supportEmail: "support@example.com",
+    advisor: {
+      name: "Juan Manuel",
+      title: "Compliance & Merchant Support Advisor",
+      partnerBadge: "Independent Partner Resource",
+      staffId: "ADV-342991",
+      caseId: "CS-114882",
+      years: "5+ years",
+      merchantsHelped: 76,
+      rating: 4.9,
+      // ✅ Your pinned staff photo
+      photoUrl: "https://i.pinimg.com/736x/1c/65/b3/1c65b3c672767808e39ba1669c8e1482.jpg"
+    },
+    countdownHours: 24,
+    ticketId: "SHOP-9001"
+  };
+</script>
 
-// ---- CONFIG (edit these values) -------------------------------------------
-const CONFIG = {
-  advisor: {
-    name: "Juan Manuel",
-    title: "Compliance & Merchant Support Advisor",
-    partnerBadge: "Independent Shopify Partner", // transparent disclosure
-    staffIdLabel: "Case Advisor ID",
-    staffId: "ADV-342991",
-    caseId: "CS-114882",
-    years: "5+ years",
-    merchantsHelped: 76,
-    rating: 4.9,
-    // ✅ Your pinned staff photo
-    photoUrl:
-      "https://i.pinimg.com/736x/1c/65/b3/1c65b3c672767808e39ba1669c8e1482.jpg",
-  },
-  ctas: {
-    whatsappHref: "https://wa.me/2349032365125",
-    telegramHref: "https://t.me/Xcellexert",
-    emailHref: "mailto:support@example.com",
-  },
-  countdownHours: 24, // urgency window
-};
-// ---------------------------------------------------------------------------
+...
 
-export default function App() {
-  const [timeLeft, setTimeLeft] = useState(CONFIG.countdownHours * 60 * 60);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const hours = Math.floor(timeLeft / 3600);
-  const minutes = Math.floor((timeLeft % 3600) / 60);
-  const seconds = timeLeft % 60;
-
-  return (
-    <div className="min-h-screen bg-gray-50 text-gray-800">
-      {/* TOP BAR */}
-      <header className="sticky top-0 z-40 border-b bg-white/80 backdrop-blur">
-        <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            {/* ✅ Shopify favicon as logo */}
-            <img
-              src="https://cdn.shopify.com/static/shopify-favicon.png"
-              alt="Shopify Logo"
-              className="w-7 h-7"
-            />
-            <div>
-              <p className="text-sm font-semibold leading-tight">
-                Merchant Support Gateway
-              </p>
-              <p className="text-xs text-gray-500 leading-tight">
-                Shopify-aligned | Independent Partner
-              </p>
-            </div>
-          </div>
-          <div className="hidden md:flex items-center gap-3 text-xs text-gray-600">
-            <Lock className="w-4 h-4" />
-            <span>Encrypted conversation channels</span>
-          </div>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-6xl px-4 py-10">
-        {/* STAFF PROFILE */}
-        <div className="bg-white shadow rounded-2xl p-6 mb-8 text-center">
-          <div className="flex flex-col items-center">
-            {/* ✅ Staff photo from config */}
-            <img
-              src={CONFIG.advisor.photoUrl}
-              alt="Advisor headshot"
-              className="w-24 h-24 md:w-28 md:h-28 rounded-full object-cover border shadow-sm"
-            />
-            <h1 className="mt-3 text-xl font-bold">{CONFIG.advisor.name}</h1>
-            <p className="text-gray-500 text-sm">{CONFIG.advisor.title}</p>
-            <span className="mt-1 text-xs bg-gray-100 px-3 py-1 rounded-full">
-              {CONFIG.advisor.partnerBadge}
-            </span>
-          </div>
-
-          <div className="mt-4 text-sm text-gray-600 grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div>
-              <p className="font-semibold">{CONFIG.advisor.years}</p>
-              <p>Experience</p>
-            </div>
-            <div>
-              <p className="font-semibold">{CONFIG.advisor.merchantsHelped}</p>
-              <p>Merchants Helped</p>
-            </div>
-            <div>
-              <p className="font-semibold">{CONFIG.advisor.rating}★</p>
-              <p>Rating</p>
-            </div>
-            <div>
-              <p className="font-semibold">{CONFIG.advisor.staffId}</p>
-              <p>{CONFIG.advisor.staffIdLabel}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* COUNTDOWN TIMER */}
-        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-6 flex items-center gap-3">
-          <Clock className="w-5 h-5 text-yellow-600" />
-          <p className="text-sm text-yellow-800">
-            Your case <strong>{CONFIG.advisor.caseId}</strong> is active. Please
-            connect within{" "}
-            <span className="font-semibold">
-              {hours}h {minutes}m {seconds}s
-            </span>{" "}
-            before reassignment.
-          </p>
-        </div>
-
-        {/* CTA BUTTONS */}
-        <div className="grid gap-4 sm:grid-cols-3">
-          <a
-            href={CONFIG.ctas.whatsappHref}
-            className="bg-green-500 text-white font-semibold py-3 px-4 rounded-xl shadow hover:bg-green-600 transition text-center"
-          >
-            💬 Connect via WhatsApp
-          </a>
-          <a
-            href={CONFIG.ctas.telegramHref}
-            className="bg-sky-500 text-white font-semibold py-3 px-4 rounded-xl shadow hover:bg-sky-600 transition text-center"
-          >
-            📡 Connect via Telegram
-          </a>
-          <a
-            href={CONFIG.ctas.emailHref}
-            className="bg-gray-700 text-white font-semibold py-3 px-4 rounded-xl shadow hover:bg-gray-800 transition text-center"
-          >
-            ✉️ Connect via Email
-          </a>
-        </div>
-      </main>
+<!-- top bar -->
+<header class="sticky top-0 bg-white/80 backdrop-blur border-b z-30">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <!-- ✅ Shopify favicon instead of green glyph -->
+      <img
+        src="https://cdn.shopify.com/static/shopify-favicon.png"
+        alt="Shopify Logo"
+        class="w-8 h-8"
+      />
+      <div>
+        <div class="text-sm font-semibold">Merchant Support Gateway</div>
+        <div class="text-xs text-gray-500">Shopify-aligned | Independent Partner</div>
+      </div>
     </div>
-  );
-}
+    <div class="hidden md:flex items-center gap-3 text-xs text-gray-600">
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 8V7a6 6 0 0 0-12 0v1"/>
+        <path d="M5 11v6a4 4 0 0 0 4 4h6"/>
+      </svg>
+      <span>Encrypted conversation channels</span>
+    </div>
+  </div>
+</header>
+
+...
+
+<!-- advisor photo (updated classes to avoid clipping) -->
+<img id="advisorPhoto"
+     src=""
+     alt="Advisor"
+     class="w-24 h-24 md:w-28 md:h-28 rounded-full object-cover border shadow-sm" />
