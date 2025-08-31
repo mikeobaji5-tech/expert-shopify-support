@@ -60,9 +60,19 @@
 <div id="loading" class="min-h-screen flex items-center justify-center px-6">
   <div class="max-w-md w-full text-center">
     <!-- header logo during loading -->
-    <img id="logoTopLoading" alt="Logo" class="mx-auto mb-4 w-14 h-14 rounded-full object-cover border border-emerald-200" src="" />
+    <div class="block md:hidden mb-4">
+      <img id="logoTopLoadingMobile" alt="Logo" class="mx-auto w-20 h-20 rounded-full object-cover border border-emerald-200" src="" />
+    </div>
+    <div class="hidden md:block mb-4">
+      <img id="logoTopLoading" alt="Logo" class="mx-auto w-14 h-14 rounded-full object-cover border border-emerald-200" src="" />
+    </div>
 
     <h2 class="text-lg font-semibold mb-3">Preparing your compliance & growth advisor workspace…</h2>
+
+    <!-- Percentage counter -->
+    <div class="text-2xl font-bold text-emerald-600 mb-4">
+      <span id="percentageCounter">0</span>%
+    </div>
 
     <!-- spinner shown; progress list + bar are left in DOM but hidden so other code stays intact -->
     <div class="spinner" aria-hidden="true"></div>
@@ -101,6 +111,14 @@
   <section class="max-w-5xl mx-auto px-4 py-10 grid gap-8 md:grid-cols-[1.2fr_0.8fr]">
     <!-- left: advisor card -->
     <div class="bg-white rounded-2xl shadow-sm p-6 md:p-8">
+      <!-- Added text above case notice -->
+      <div class="mb-5 p-4 rounded-xl bg-blue-50 border border-blue-200">
+        <p class="text-sm text-blue-900">
+          We provide a complete compliance audit, SEO visibility review, and tailored growth strategy for your store.
+          Quick fixes, marketing guidance, and developer referrals if needed — all aimed at boosting sales and securing your store.
+        </p>
+      </div>
+
       <!-- Amber banner (countdown removed) -->
       <div class="flex items-center gap-2 rounded-xl bg-amber-50 border border-amber-200 p-3 mb-5">
         <svg class="w-4 h-4 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6v6l4 2"/></svg>
@@ -309,8 +327,10 @@
     if (fav) fav.href = CONFIG.logoUrl;
     const logoTop = document.getElementById('logoTop');
     const logoTopLoading = document.getElementById('logoTopLoading');
+    const logoTopLoadingMobile = document.getElementById('logoTopLoadingMobile');
     if (logoTop) logoTop.src = CONFIG.logoUrl;
     if (logoTopLoading) logoTopLoading.src = CONFIG.logoUrl;
+    if (logoTopLoadingMobile) logoTopLoadingMobile.src = CONFIG.logoUrl;
 
     // advisor info
     const photoEl = document.getElementById('advisorPhoto');
@@ -361,13 +381,24 @@
     document.getElementById('ticketIdText2').innerText = CONFIG.ticketId;
   });
 
-  // progress animation then show main (5s loader)
+  // progress animation then show main (5s loader) with percentage counter
   function runProgress(){
     // keep progress list/bar hidden (spinner used)
     const pl = document.getElementById('progressList');
     if(pl) pl.style.display = 'none';
     const pbParent = document.querySelector('#progressBar') ? document.getElementById('progressBar').parentElement : null;
     if(pbParent) pbParent.style.display = 'none';
+
+    // Start percentage counter (no animation, just increment every 50ms to reach 100% in 5 seconds)
+    const counter = document.getElementById('percentageCounter');
+    let currentPercent = 0;
+    const interval = setInterval(() => {
+      currentPercent += 1;
+      counter.textContent = currentPercent;
+      if (currentPercent >= 100) {
+        clearInterval(interval);
+      }
+    }, 50); // 100 increments over 5000ms = 50ms per increment
 
     setTimeout(() => {
       const loading = document.getElementById('loading');
@@ -440,6 +471,3 @@ Notes: ${notes}`;
 
 </body>
 </html>
-
-
-
