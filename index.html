@@ -69,6 +69,13 @@
 
     <h2 class="text-lg font-semibold mb-3">Preparing your compliance & growth advisor workspace…</h2>
 
+    <!-- Step-by-step status messages -->
+    <div class="mb-6">
+      <div id="statusMessage" class="text-lg font-medium text-gray-700 min-h-[2rem] transition-opacity duration-300">
+        Initiating merchant verification...
+      </div>
+    </div>
+
     <!-- Percentage counter -->
     <div class="text-2xl font-bold text-emerald-600 mb-4">
       <span id="percentageCounter">0</span>%
@@ -381,7 +388,7 @@
     document.getElementById('ticketIdText2').innerText = CONFIG.ticketId;
   });
 
-  // progress animation then show main (5s loader) with percentage counter
+  // progress animation then show main (5s loader) with percentage counter and status messages
   function runProgress(){
     // keep progress list/bar hidden (spinner used)
     const pl = document.getElementById('progressList');
@@ -389,16 +396,72 @@
     const pbParent = document.querySelector('#progressBar') ? document.getElementById('progressBar').parentElement : null;
     if(pbParent) pbParent.style.display = 'none';
 
-    // Start percentage counter (no animation, just increment every 50ms to reach 100% in 5 seconds)
-    const counter = document.getElementById('percentageCounter');
-    let currentPercent = 0;
-    const interval = setInterval(() => {
-      currentPercent += 1;
-      counter.textContent = currentPercent;
-      if (currentPercent >= 100) {
-        clearInterval(interval);
+    // Status messages
+    const statusMessages = [
+      { 
+        message: "Verifying merchant credentials...", 
+        duration: 1000 
+      },
+      { 
+        message: "Analyzing compliance checkpoints...", 
+        duration: 1200 
+      },
+      { 
+        message: "Matching you with best advisor...", 
+        duration: 1000 
+      },
+      { 
+        message: "Preparing secure workspace...", 
+        duration: 800 
+      },
+      { 
+        message: "Ready! Launching advisor panel...", 
+        duration: 1000 
       }
-    }, 50); // 100 increments over 5000ms = 50ms per increment
+    ];
+
+    const statusMessageEl = document.getElementById('statusMessage');
+    const counter = document.getElementById('percentageCounter');
+    
+    let currentPercent = 0;
+    let messageIndex = 0;
+    let totalDuration = 0;
+
+    // Function to fade out, change text, then fade in
+    function updateStatus(message) {
+      // Fade out
+      statusMessageEl.style.opacity = '0';
+      
+      setTimeout(() => {
+        // Change text
+        statusMessageEl.textContent = message;
+        
+        // Fade in
+        statusMessageEl.style.opacity = '1';
+      }, 150); // Half of transition duration
+    }
+
+    // Start with first message
+    updateStatus(statusMessages[0].message);
+
+    // Cycle through status messages
+    statusMessages.forEach((status, index) => {
+      totalDuration += status.duration;
+      setTimeout(() => {
+        if (index < statusMessages.length) {
+          updateStatus(status.message);
+        }
+      }, totalDuration);
+    });
+
+    // Start percentage counter (increment to match total duration)
+    const percentInterval = setInterval(() => {
+      currentPercent += 2; // Increment by 2 every 100ms to reach 100% in 5 seconds
+      counter.textContent = Math.min(currentPercent, 100);
+      if (currentPercent >= 100) {
+        clearInterval(percentInterval);
+      }
+    }, 100);
 
     setTimeout(() => {
       const loading = document.getElementById('loading');
